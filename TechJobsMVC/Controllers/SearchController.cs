@@ -12,26 +12,32 @@ namespace TechJobsMVC.Controllers
 {
     public class SearchController : Controller
     {
+        List<Job> jobList = new List<Job>();
+
         // GET: /<controller>/
         public IActionResult Index()
         {
             ViewBag.columns = ListController.ColumnChoices;
+            ViewBag.jobs = jobList;
             return View();
         }
 
+        //[HttpGet("/search/results/")]
         public IActionResult Results(string searchType, string searchTerm)
         {
-            var jobList = new List<Job>();
+            ViewBag.columns = ListController.ColumnChoices;
 
             if (String.IsNullOrEmpty(searchTerm))
             {
-                jobList = JobData.FindAll();
-                ViewBag.jobs = jobList;
-
-                return ViewBag.jobs;
+                ViewBag.jobs = JobData.FindAll();
+                return View("Index");
             }
 
-
+            else 
+            {
+                ViewBag.jobs = JobData.FindByColumnAndValue(searchType, searchTerm);
+                return View("Index");
+            }
         }
     }
 }
